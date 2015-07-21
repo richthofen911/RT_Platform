@@ -16,7 +16,7 @@ function checkPromptFlag(cmd){
 }
 
 function sendCommand(cmdRaw) {
-    request('http://192.168.128.98:3000?cmd=' + cmdRaw, function (error, response, body) {
+    request('http://104.167.102.201:2333?cmd=' + cmdRaw, function (error, response, body) {
         if (!error && response.statusCode == 200) {
             console.log(body);
             rl.question("Sir: ", function (command) {
