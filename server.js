@@ -9,7 +9,7 @@ var phoneFeedback = 'no echo';
 var connectedList = {};
 var selectedId = 'no selected id';
 var connectionListStr = '';
-var phoneInfo = '';
+var isFeedbackUpdated = false;
 
 io.sockets.on('connection', function(socket){
     thisConnectionId = socket.id;
@@ -20,10 +20,10 @@ io.sockets.on('connection', function(socket){
     //receive new messages
     socket.on('new message', function(data){
         phoneFeedback = data;
+        isFeedbackUpdated = true;
         console.log('new message arrive: ' + data);
-        var tmp = data.split(' ');
-        var ends = tmp[tmp.length - 1];
-        if(ends == 'offline'){
+        if(data.substr(-4) == '****'){//**** is the special defined signal for offline
+            var tmp = data.split(' ');
             delete connectedList[tmp[1]];
             selectedId = 'no selected id';
             connectionListStr = '';
@@ -61,9 +61,10 @@ function handler(req, res){
                     console.log('news sent: ' + objectQuery[i]);
                     var polling = setInterval(function(){
                         console.log('polling phone feedback: ' + phoneFeedback);
-                        if(phoneFeedback != 'no echo'){
+                        if(isFeedbackUpdated == true){
                             res.write(phoneFeedback);
                             res.end();
+                            isFeedbackUpdated = false;
                             clearInterval(polling);
                         }
                     }, 500);
@@ -82,5 +83,5 @@ function handler(req, res){
 }
 
 server.listen(3000, function(){
-    console.log('listening on *:3000');
+    console.log('listening on *:2333');
 });
