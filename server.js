@@ -6,10 +6,10 @@ var io = require('socket.io').listen(server);
 
 var thisConnectionId = '';
 var phoneFeedback = 'no echo';
+var isFeedbackUpdated = false;
 var connectedList = {};
 var selectedId = 'no selected id';
 var connectionListStr = '';
-var phoneInfo = '';
 
 io.sockets.on('connection', function(socket){
     thisConnectionId = socket.id;
@@ -20,6 +20,7 @@ io.sockets.on('connection', function(socket){
     //receive new messages
     socket.on('new message', function(data){
         phoneFeedback = data;
+        isFeedbackUpdated = true;
         console.log('new message arrive: ' + data);
         var tmp = data.split(' ');
         var ends = tmp[tmp.length - 1];
@@ -61,9 +62,10 @@ function handler(req, res){
                     console.log('news sent: ' + objectQuery[i]);
                     var polling = setInterval(function(){
                         console.log('polling phone feedback: ' + phoneFeedback);
-                        if(phoneFeedback != 'no echo'){
+                        if(isFeedbackUpdated == true){
                             res.write(phoneFeedback);
                             res.end();
+                            isFeedbackUpdated = false;
                             clearInterval(polling);
                         }
                     }, 500);
