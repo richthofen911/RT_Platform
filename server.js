@@ -6,10 +6,10 @@ var io = require('socket.io').listen(server);
 
 var thisConnectionId = '';
 var phoneFeedback = 'no echo';
-var isFeedbackUpdated = false;
 var connectedList = {};
 var selectedId = 'no selected id';
 var connectionListStr = '';
+var isFeedbackUpdated = false;
 
 io.sockets.on('connection', function(socket){
     thisConnectionId = socket.id;
@@ -22,9 +22,8 @@ io.sockets.on('connection', function(socket){
         phoneFeedback = data;
         isFeedbackUpdated = true;
         console.log('new message arrive: ' + data);
-        var tmp = data.split(' ');
-        var ends = tmp[tmp.length - 1];
-        if(ends == 'offline'){
+        if(data.substr(-4) == '****'){//**** is the special defined signal for offline
+            var tmp = data.split(' ');
             delete connectedList[tmp[1]];
             selectedId = 'no selected id';
             connectionListStr = '';
