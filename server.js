@@ -64,6 +64,7 @@ function handler(req, res){
                         if(isFeedbackUpdated == true){
                             res.write(phoneFeedback);
                             res.end();
+                            phoneFeedback = 'no echo';
                             isFeedbackUpdated = false;
                             clearInterval(polling);
                         }
